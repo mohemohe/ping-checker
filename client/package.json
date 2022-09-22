@@ -1,0 +1,35 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "sass": "^1.55.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "@emotion/babel-plugin": "^11.10.2",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/material": "^5.10.6",
+    "@mui/x-date-pickers": "^5.0.2",
+    "@vitejs/plugin-react": "^2.1.0",
+    "dayjs": "^1.11.5",
+    "logt": "^1.4.5",
+    "mobx": "^6.6.2",
+    "mobx-react": "^7.5.3",
+    "notistack": "^2.0.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^3.1.4",
+    "recharts": "^2.1.14",
+    "sanitize.css": "^13.0.0",
+    "vite": "^3.1.3"
+  },
+  "scripts": {
+    "watch": "vite build --watch --emptyOutDir",
+    "build": "vite build --emptyOutDir"
+  }
+}

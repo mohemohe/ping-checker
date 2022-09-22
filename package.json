@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "workspaces": [
+    "client",
+    "checker",
+    "server"
+  ],
+  "scripts": {
+    "build:assets": "cd client && yarn build"
+  }
+}
