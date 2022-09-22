@@ -48,6 +48,10 @@ async function main() {
       createdAt: now,
     };
     collection.insertOne(doc);
+
+    if (process.env.DISABLE_CHECKER_LOG === "true") {
+      return;
+    }
     console.log(JSON.stringify(doc));
   }, 1000);
 }
