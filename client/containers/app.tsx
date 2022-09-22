@@ -64,7 +64,7 @@ const colors = [
 export const App = inject("LoadingStore", "PingStore")(
   observer((props: IProps) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [start, setStart] = useState(dayjs().startOf("day"));
+    const [start, setStart] = useState(dayjs().add(-3, "hours"));
     const [end, setEnd] = useState(dayjs());
 
     const fetchData = () => props.PingStore!.fetch(start.unix(), end.unix());

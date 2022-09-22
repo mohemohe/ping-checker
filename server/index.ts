@@ -24,7 +24,7 @@ class ApiController extends BaseController {
       end = dayjs().unix();
     }
     if (!start) {
-      start = dayjs.unix(end).startOf("day").unix();
+      start = dayjs.unix(end).add(-3, "hours").unix();
     }
 
     let startDayJs = dayjs.unix(start);
