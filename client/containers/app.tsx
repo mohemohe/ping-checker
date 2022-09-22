@@ -51,14 +51,14 @@ const styles = {
 };
 
 const colors = [
-  "#F44336",
-  "#3F51B5",
-  "#4CAF50",
-  "#FF9800",
-  "#9C27B0",
-  "#00BCD4",
-  "#795548",
-  "#607D8B",
+  "#f06292",
+  "#64b5f6",
+  "#81c784",
+  "#ffd54f",
+  "#9575cd",
+  "#4dd0e1",
+  "#dce775",
+  "#ff8a65",
 ]
 
 export const App = inject("LoadingStore", "PingStore")(
