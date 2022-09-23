@@ -15,6 +15,7 @@ if (!process.env.MONGO_URL) {
 const client = new MongoClient(process.env.MONGO_URL, {
   retryWrites: true,
 });
+const enableIndex = process.env.ENABLE_MONGO_INDEX === "true";
 
 @route("/api/v1/results")
 class ApiController extends BaseController {
@@ -97,6 +98,7 @@ class ApiController extends BaseController {
 
     const db = client.db(dbName);
     const collection = db.collection("results");
+    const aggregateOption = enableIndex ? { hint: "timeseries" } : {};
     const aggregates = await collection.aggregate([
       { 
         $match: {
@@ -143,7 +145,7 @@ class ApiController extends BaseController {
           networkType: "$_id.networkType",
         },
       },
-    ]).toArray();
+    ], aggregateOption).toArray();
 
     const results = _.groupBy(aggregates, "createdAt");
 

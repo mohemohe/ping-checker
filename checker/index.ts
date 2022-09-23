@@ -8,6 +8,7 @@ const targetAddr = process.env.TARGET_ADDR || "1.1.1.1";
 const networkType = process.env.NETWORK_TYPE || "不明";
 const useIpv6 = !!process.env.USE_IPV6;
 const dbName = process.env.MONGO_DB || "ping-checker";
+const enableIndex = process.env.ENABLE_MONGO_INDEX === "true";
 
 if (!process.env.MONGO_URL) {
   throw new Error("invalid environment variable: 'MONGO_URL'");
@@ -27,9 +28,19 @@ async function main() {
         timeField: "createdAt",
         granularity: "seconds",
       }
-    })
+    });
   }
   const collection = db.collection("results");
+
+  const existsIndex = await collection.indexExists("timeseries");
+  if (enableIndex && !existsIndex) {
+    await collection.createIndex({ createdAt: 1 }, {
+      name: "timeseries",
+      background: true,
+    });
+  } else if (!enableIndex && existsIndex) {
+    collection.dropIndex("timeseries");
+  }
 
   setInterval(async () => {
     const now = new Date();
