@@ -71,11 +71,8 @@ export const App = inject("LoadingStore", "PingStore")(
 
     useDidMount(async () => {
       (window as any).enqueueSnackbar = enqueueSnackbar;
-    });
-
-    useEffect(() => {
       fetchData();
-    }, [start, end]);
+    });
 
     return (
       <>
@@ -89,6 +86,7 @@ export const App = inject("LoadingStore", "PingStore")(
                     ampm={false}
                     value={start}
                     onChange={(value: dayjs.Dayjs | null) => value && setStart(value)}
+                    onAccept={() => fetchData()}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Box>
@@ -98,6 +96,7 @@ export const App = inject("LoadingStore", "PingStore")(
                     ampm={false}
                     value={end}
                     onChange={(value: dayjs.Dayjs | null) => value && setEnd(value)}
+                    onAccept={() => fetchData()}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </Box>
