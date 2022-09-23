@@ -75,11 +75,11 @@ export const App = inject("LoadingStore", "PingStore")(
     const [end, setEnd] = useState(dayjs());
     const [selectValue, setSelectValue] = useState<string | number>(-180);
 
-    const fetchData = () => props.PingStore!.fetch(start.unix(), end.unix());
+    const fetchData = (startUnix: number, endUnix: number) => props.PingStore!.fetch(startUnix, endUnix);
 
     useDidMount(async () => {
       (window as any).enqueueSnackbar = enqueueSnackbar;
-      fetchData();
+      fetchData(start.unix(), end.unix());
     });
 
     const onChangeSelect = (e: SelectChangeEvent<string | number>) => {
@@ -88,24 +88,31 @@ export const App = inject("LoadingStore", "PingStore")(
       if (e.target.value === "") {
         return;
       }
+
+      let start;
+      let end;
       if (typeof e.target.value === "number") {
         const now = dayjs();
-        setEnd(now);
-        setStart(dayjs(now).add(e.target.value, "minutes"));
-      }
-      if (typeof e.target.value === "string") {
+        start = dayjs(now).add(e.target.value, "minutes");
+        end = now;
+      } else {
         switch (e.target.value) {
           case "today":
-            setStart(dayjs().startOf("day"));
-            setEnd(dayjs().endOf("day"));
+            start = dayjs().startOf("day");
+            end = dayjs().endOf("day");
             break;
           case "yesterday":
-            setStart(dayjs().startOf("day").add(-1, "day"));
-            setEnd(dayjs().endOf("day").add(-1, "day"));
-          break;
+            start = dayjs().startOf("day").add(-1, "day");
+            end = dayjs().endOf("day").add(-1, "day");
+            break;
+          default:
+            enqueueSnackbar("不正な値です");
+            return;
         }
       }
-      fetchData();
+      setStart(start);
+      setEnd(end);
+      fetchData(start.unix(), end.unix());
     };
 
     return (
@@ -142,9 +149,9 @@ export const App = inject("LoadingStore", "PingStore")(
                     ampm={false}
                     value={start}
                     onChange={(value: dayjs.Dayjs | null) => value && setStart(value)}
-                    onAccept={() => {
+                    onAccept={(value: dayjs.Dayjs | null) => {
                       setSelectValue("");
-                      fetchData();
+                      fetchData((value || start).unix(), end.unix());
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -155,9 +162,9 @@ export const App = inject("LoadingStore", "PingStore")(
                     ampm={false}
                     value={end}
                     onChange={(value: dayjs.Dayjs | null) => value && setEnd(value)}
-                    onAccept={() => {
+                    onAccept={(value: dayjs.Dayjs | null) => {
                       setSelectValue("");
-                      fetchData();
+                      fetchData(start.unix(), (value || end).unix());
                     }}
                     renderInput={(params) => <TextField {...params} />}
                   />
