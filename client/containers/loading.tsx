@@ -32,7 +32,7 @@ export const Loading = inject("LoadingStore")(
 
     return (
       <div css={styles.root}>
-        <CircularProgress size={64} />
+        <CircularProgress size={64} disableShrink />
       </div>
     );
   }),
