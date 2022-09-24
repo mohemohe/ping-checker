@@ -122,7 +122,7 @@ class ApiController extends BaseController {
 
     const results = _.groupBy(aggregates, "createdAt");
 
-    console.log(Object.keys(results).length)
+    req.log.debug(`data count: ${Object.keys(results).length}`);
 
     res.send({
       results,
