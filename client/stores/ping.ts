@@ -22,11 +22,13 @@ class PingStore extends Base {
   }
 
   @action
-  public async fetch(start?: number, end?: number) {
+  public async fetch(start?: number, end?: number, loading?: Boolean) {
     Logger.verbose("PingStore", "start:", start);
     Logger.verbose("PingStore", "end:", end);
 
-    this.setState(State.RUNNING);
+    if (loading !== false) {
+      this.setState(State.RUNNING);
+    }
     try {
       let url = this.apiUrl("v1/results");
 
@@ -77,7 +79,7 @@ class PingStore extends Base {
     })
 
     Logger.debug("PingStore", "latency", "keys:", keys);
-    Logger.debug("PingStore", "latency", "data:", data);
+    Logger.debug("PingStore", "latency", "data:", data[0], "...", data.length);
 
     return {
       keys,
@@ -108,7 +110,7 @@ class PingStore extends Base {
     })
 
     Logger.debug("PingStore", "packet loss", "keys:", keys);
-    Logger.debug("PingStore", "packet loss", "data:", data);
+    Logger.debug("PingStore", "packet loss", "data:", data[0], "...", data.length);
 
     return {
       keys,
