@@ -28,80 +28,44 @@ const cors = () => middleware((req, res, next) => {
 @route("/api/v1/results")
 class ApiController extends BaseController {
   @cors()
-  public static async get(req: FastifyRequest<{ Querystring: { start?: number; end?: number; } }>, res: FastifyReply) {
-    let { start, end } = req.query;
+  public static async get(req: FastifyRequest<{ Querystring: { start?: string; end?: string; target?: string; } }>, res: FastifyReply) {
+    let { start, end, target } = req.query;
+
+    let startDayjs: dayjs.Dayjs;
+    let endDayjs: dayjs.Dayjs;
     if (!end) {
-      end = dayjs().unix();
+      endDayjs = dayjs();
+    } else {
+      const endNumber = parseInt(end, 10);
+      if (!isNaN(endNumber)) {
+        endDayjs = dayjs.unix(endNumber);
+      } else {
+        endDayjs = dayjs();
+      }
     }
     if (!start) {
-      start = dayjs.unix(end).add(-3, "hours").unix();
-    }
-
-    let startDayJs = dayjs.unix(start);
-    let endDayJs = dayjs.unix(end);
-
-    let dateTrunc;
-    if (Math.abs(startDayJs.diff(endDayJs, "hour", true)) <= 1.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "second",
-        binSize: 2,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "hour", true)) <= 3.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "second",
-        binSize: 20,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "hour", true)) <= 6.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "minute",
-        binSize: 2,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "days", true)) <= 1.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "minute",
-        binSize: 20,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "days", true)) <= 3.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "hour",
-        binSize: 2,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "days", true)) <= 6.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "hour",
-        binSize: 6,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "month", true)) <= 1.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "day",
-        binSize: 1,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "year", true)) <= 3.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "month",
-        binSize: 1,
-      };
-    } else if (Math.abs(startDayJs.diff(endDayJs, "year", true)) <= 6.0) {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "month",
-        binSize: 2,
-      };
+      startDayjs = dayjs();
     } else {
-      dateTrunc = {
-        date: "$createdAt",
-        unit: "year",
-        binSize: 1,
-      };
+      const startNumber = parseInt(start, 10);
+      if (!isNaN(startNumber)) {
+        startDayjs = dayjs.unix(startNumber);
+      } else {
+        startDayjs = dayjs();
+      }
     }
+
+    let targetNumber = parseInt(target || "", 10);
+    if (isNaN(targetNumber)) {
+      targetNumber = 400;
+    }
+
+    const diff = Math.abs(startDayjs.diff(endDayjs, "seconds", false));
+    const binSize = Math.ceil(diff / targetNumber);
+    const dateTrunc = {
+      date: "$createdAt",
+      unit: "second",
+      binSize,
+    };
 
     req.log.debug(dateTrunc);
 
@@ -112,8 +76,8 @@ class ApiController extends BaseController {
       { 
         $match: {
           createdAt: {
-            $gte: dayjs.unix(start).toDate(),
-            $lte: dayjs.unix(end).toDate(),
+            $gte: startDayjs.toDate(),
+            $lte: endDayjs.toDate(),
           },
         },
       },
@@ -157,6 +121,8 @@ class ApiController extends BaseController {
     ], aggregateOption).toArray();
 
     const results = _.groupBy(aggregates, "createdAt");
+
+    console.log(Object.keys(results).length)
 
     res.send({
       results,
