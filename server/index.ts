@@ -60,7 +60,7 @@ class ApiController extends BaseController {
     }
 
     const diff = Math.abs(startDayjs.diff(endDayjs, "seconds", false));
-    const binSize = Math.ceil(diff / targetNumber);
+    const binSize = Math.round(diff / targetNumber);
     const dateTrunc = {
       date: "$createdAt",
       unit: "second",
