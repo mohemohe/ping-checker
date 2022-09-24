@@ -1,6 +1,7 @@
 import path from "path";
 import dayjs from "dayjs";
 import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import { middleware } from "@common-creation/fastify-decorators/middleware";
 import { BaseController, registerRoutes, route } from "@common-creation/fastify-decorators/route";
 import { MongoClient } from "mongodb";
 import _ from "lodash";
@@ -17,8 +18,16 @@ const client = new MongoClient(process.env.MONGO_URL, {
 });
 const enableIndex = process.env.ENABLE_MONGO_INDEX === "true";
 
+const cors = () => middleware((req, res, next) => {
+  if (process.env.ALLOW_SERVER_CORS === "true") {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
+  next(req, res);
+});
+
 @route("/api/v1/results")
 class ApiController extends BaseController {
+  @cors()
   public static async get(req: FastifyRequest<{ Querystring: { start?: number; end?: number; } }>, res: FastifyReply) {
     let { start, end } = req.query;
     if (!end) {

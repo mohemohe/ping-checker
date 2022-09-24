@@ -7,6 +7,9 @@ const fullHash = execSync("git rev-parse HEAD").toString().trim();
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, __dirname), VITE_GIT_HASH: fullHash };
+  if (mode === "development") {
+    process.env.VITE_API_BASE_URL = `http://localhost:${process.env.SERVER_PORT || "8080"}/api/`;
+  }
 
   return {
     root: "./",

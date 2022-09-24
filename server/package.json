@@ -9,7 +9,7 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-    "@common-creation/fastify-decorators": "^0.2.0",
+    "@common-creation/fastify-decorators": "^0.3.0",
     "@fastify/static": "^6.5.0",
     "dayjs": "^1.11.5",
     "dotenv": "^16.0.2",
