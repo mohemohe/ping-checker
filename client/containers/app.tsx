@@ -268,6 +268,7 @@ export const App = inject(
                     label={"自動更新"}
                     onChange={onChangeAutoRefreshIntervalValue}
                     value={autoRefreshIntervalValue}
+                    disabled={typeof selectRangeValue === "string"}
                   >
                     <MenuItem value={"disabled"}>-</MenuItem>
                     {typeof selectRangeValue === "number" && selectRangeValue >= -60 && <MenuItem value={2}>2秒</MenuItem>}
@@ -277,7 +278,7 @@ export const App = inject(
                   </Select>
                 </FormControl>
                 <Box position={"absolute"} bottom={0} left={0} right={0}>
-                  <LinearProgress variant={"determinate"} value={timerValue}  />
+                  <LinearProgress variant={"determinate"} value={timerValue} />
                 </Box>
               </Box>
             </Grid>
